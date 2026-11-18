@@ -1,0 +1,254 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Book Collection</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        .availability-container {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .availability-button {
+            background-color: #2f7254;
+            color: white;
+            padding: 13px 22px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .total-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 35px;
+        }
+
+        .total-button {
+            background-color: #30483e;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .copies-total {
+            background-color: #805843;
+        }
+
+        .book-card {
+            text-align: center;
+        }
+
+        .book-card.active {
+            outline: 4px solid #d4af37;
+            outline-offset: 2px;
+        }
+
+        .book-card:focus-visible {
+            outline: 4px solid #d4af37;
+            outline-offset: 3px;
+        }
+
+        .book-controls a:hover {
+            background-color: #42635c;
+        }
+
+        .book-description {
+            line-height: 1.9;
+            font-size: 17px;
+            text-align: justify;
+        }
+
+        .selected-book-label {
+            text-align: center;
+            margin-bottom: 12px;
+            color: #71553c;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .availability-container {
+                justify-content: center;
+            }
+
+            .book-description {
+                font-size: 15px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+        <h1>My Book Collection</h1>
+        <p>Explore Our Digital Library</p>
+    </header>
+
+    <main>
+
+        <h2 class="section-title">Selected Book</h2>
+
+        <p class="selected-book-label">
+            Book {{ selected_book.id }} of {{ total_books }}
+        </p>
+
+        <div class="open-book">
+
+            <div class="book-page left-page">
+
+                <h2>{{ selected_book.name }}</h2>
+
+                <hr>
+
+                <p>
+                    <b>Book ID:</b>
+                    {{ selected_book.id }}
+                </p>
+
+                <p>
+                    <b>Book Name:</b>
+                    {{ selected_book.name }}
+                </p>
+
+                <p>
+                    <b>Author:</b>
+                    {{ selected_book.author }}
+                </p>
+
+                <p>
+                    <b>Price:</b>
+                    ₹{{ selected_book.price }}
+                </p>
+
+                <p>
+                    <b>Category:</b>
+                    {{ selected_book.category }}
+                </p>
+
+                <p>
+                    <b>Total Chapters:</b>
+                    {{ selected_book.chapters }}
+                </p>
+
+                <div class="availability-container">
+
+                    <button class="availability-button" type="button">
+                        Available Copies:
+                        {{ selected_book.available_copies }}
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="book-page right-page">
+
+                <h2>Book Description</h2>
+
+                <hr>
+
+                <p class="book-description">
+                    {{ selected_book.description }}
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="book-controls">
+
+            {% if selected_book.id > 1 %}
+
+            <a href="?book={{ selected_book.id|add:'-1' }}">
+                &#10094; Previous
+            </a>
+
+            {% endif %}
+
+            <span>
+                Book {{ selected_book.id }} / {{ total_books }}
+            </span>
+
+            {% if selected_book.id < total_books %}
+
+            <a href="?book={{ selected_book.id|add:'1' }}">
+                Next &#10095;
+            </a>
+
+            {% endif %}
+
+        </div>
+
+        <section class="collection">
+
+            <h2>Available Books</h2>
+
+            <div class="book-grid">
+
+                {% for book in books|slice:":50" %}
+
+                <a
+                    href="?book={{ book.id }}"
+                    class="book-card {% if book.id == selected_book.id %}active{% endif %}"
+                    {% if book.id == selected_book.id %}
+                    aria-current="page"
+                    {% endif %}
+                >
+
+                    <span class="book-symbol">
+                        📖
+                    </span>
+
+                    <span class="book-name">
+                        {{ book.name }}
+                    </span>
+
+                    <span class="book-id">
+                        ID: {{ book.id }}
+                    </span>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="total-container">
+
+                <button class="total-button" type="button">
+                    Total Book Titles: {{ total_books }}
+                </button>
+
+                <button class="total-button copies-total" type="button">
+                    Total Available Copies:
+                    {{ total_available_copies }}
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
